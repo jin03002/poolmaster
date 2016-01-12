@@ -29,6 +29,9 @@ def main():
 	#Output to file for testing
 	cv2.imwrite("Output.jpg", frame)
 
+	#56, 182, 241
+	#20, 77, 144
+
 	#Hough circle detection using greyscale img
 	min_radius = 50
 	max_radius = 1000
