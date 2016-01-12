@@ -4,21 +4,24 @@ from pykinect2.PyKinectV2 import *
 from pykinect2 import PyKinectRuntime
 import numpy as np
 
+
 def main():
 
 	#Initialize Kinect
-	kinect = PyKinectRuntime.PyKinectRuntime(PyKinectV2.FrameSourceTypes_Color | PyKinectV2.FrameSourceTypes_Body)
+	# kinect = PyKinectRuntime.PyKinectRuntime(PyKinectV2.FrameSourceTypes_Color | PyKinectV2.FrameSourceTypes_Body)
 
-	#Get one color picture frame
-	frame=None
-	while(True):
-		if(kinect.has_new_color_frame()):
-			frame = kinect.get_last_color_frame()
-			print(frame.view())
-			break
+	# #Get one color picture frame
+	# frame=None
+	# while(True):
+	# 	if(kinect.has_new_color_frame()):
+	# 		frame = kinect.get_last_color_frame()
+	# 		print(frame.view())
+	# 		break
 
-	#Convert to opencv
-	frame = frame.reshape((1080, 1920, 4))
+	# #Convert to opencv
+	# frame = frame.reshape((1080, 1920, 4))
+
+	frame = cv2.imread('Output3.jpg')
 
 	#Create opencv output
 	output = frame.copy()
@@ -31,9 +34,10 @@ def main():
 	max_radius = 1000
 
 	gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+	gray_frame = cv2.medianBlur(gray_frame,21)
 	cv2.imwrite("OutputGray.jpg", gray_frame)
 
-	balls = cv2.HoughCircles(gray_frame, cv2.cv.CV_HOUGH_GRADIENT, 1, 20, minRadius=0, maxRadius=1000)
+	balls = cv2.HoughCircles(gray_frame, cv2.cv.CV_HOUGH_GRADIENT, 1.9, circles=21, minDist=150, param1=100, param2=100, minRadius=100, maxRadius=500)
 
 	print("Detected balls")
 	print(balls)
@@ -41,8 +45,9 @@ def main():
 
 	#Display detected balls
 	for (x, y, z) in balls:
-		cv2.circle(frame, (x, y), z, (0, 255, 0), 2)
+		cv2.circle(frame, (x, y), z, (0, 255, 0), 4)
 
+	cv2.imwrite("DetectedBalls.jpg", frame )
 	cv2.imshow("output", frame)
 	cv2.waitKey(0)
 
