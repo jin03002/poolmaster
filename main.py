@@ -7,21 +7,21 @@ import numpy as np
 
 def main():
 
-	#Initialize Kinect
-	# kinect = PyKinectRuntime.PyKinectRuntime(PyKinectV2.FrameSourceTypes_Color | PyKinectV2.FrameSourceTypes_Body)
+	#initialize Kinect
+	kinect = PyKinectRuntime.PyKinectRuntime(PyKinectV2.FrameSourceTypes_Color | PyKinectV2.FrameSourceTypes_Body)
 
-	# #Get one color picture frame
-	# frame=None
-	# while(True):
-	# 	if(kinect.has_new_color_frame()):
-	# 		frame = kinect.get_last_color_frame()
-	# 		print(frame.view())
-	# 		break
+	#Get one color picture frame
+	frame=None
+	while(True):
+		if(kinect.has_new_color_frame()):
+			frame = kinect.get_last_color_frame()
+			print(frame.view())
+			break
 
-	# #Convert to opencv
-	# frame = frame.reshape((1080, 1920, 4))
+	#Convert to opencv
+	frame = frame.reshape((1080, 1920, 4))
 
-	frame = cv2.imread('Output3.jpg')
+	# frame = cv2.imread('Output3.jpg')
 
 	#Create opencv output
 	output = frame.copy()
