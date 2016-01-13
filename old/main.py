@@ -21,7 +21,7 @@ def main():
 	# #Convert to opencv
 	# frame = frame.reshape((1080, 1920, 4))
 
-	frame = cv2.imread('Output3.jpg')
+	frame = cv2.imread('Output4.jpg')
 
 	#Create opencv output
 	output = frame.copy()
@@ -36,14 +36,12 @@ def main():
 	min_radius = 50
 	max_radius = 1000
 
-	lower_blue = np.array([0,70,0])
-	upper_blue = np.array([255,182,255])
-
-	gray_frame = cv2.inRange(frame, lower_blue, upper_blue)
-	gray_frame = cv2.medianBlur(gray_frame,21)
+	gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+	# gray_frame = cv2.medianBlur(gray_frame,21)
 	cv2.imwrite("OutputGray.jpg", gray_frame)
 
-	balls = cv2.HoughCircles(gray_frame, cv2.cv.CV_HOUGH_GRADIENT, 1, circles=21, minDist=150, param1=100, param2=100, minRadius=40, maxRadius=200)
+	balls = cv2.HoughCircles(gray_frame, cv2.cv.CV_HOUGH_GRADIENT, 2.2 , minDist=40, minRadius=40, maxRadius=1400)
+	# balls = cv2.HoughCircles(gray_frame, cv2.cv.CV_HOUGH_GRADIENT, 1.9, circles=21, minDist=150, param1=100, param2=100, minRadius=80, maxRadius=200)
 
 	print("Detected balls")
 	print(balls)
