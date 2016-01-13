@@ -1,10 +1,12 @@
 import cv2
 import numpy as np
+import copy
 
 def detect_balls(background_file_name, file_name):
 
 	background = cv2.imread(background_file_name)
 	frame = cv2.imread(file_name)
+	oframe = copy.copy(frame)
 
 	#Background subtraction
 	diff = cv2.absdiff(frame, background)
@@ -48,11 +50,37 @@ def detect_balls(background_file_name, file_name):
 
 	cv2.imwrite("DetectedBalls.jpg", frame)
 
-	return (masked_frame, balls)
+	return (oframe, masked_frame, balls)
 
-def determine_color(frame, balls, radius):
+def detect_color(frame, balls, radius):
 
 	dict_balls={}
+	hsv_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+ 
+	cv2.imwrite("OutputHue.jpg", hsv_frame)
+	frame_copy = copy.copy(frame)
+
+	saturation_frame = hsv_frame[0:, 0:, 2::3]
+	
+	cv2.imwrite("OutputSaturation.jpg", saturation_frame)
+
+	print(saturation_frame)
+
+	ind=1
+	for (x, y, r) in balls:
+
+		total_non_white=0
+		total_white=0
+		hue=0
+
+		# for a in range(x-radius, x+radius+1):
+		# 	for b in range(y-radius, y+radius+1):
+		# 		if((x-a)*(x-a)+(y-b)*(y-b))
+
+		cv2.circle(frame_copy, (x, y), radius, (255, 0, 0), 4)
+		ind+=1
+
+	cv2.imwrite("OutputDetectColor.jpg", frame_copy)
 
 	return dict_balls
 
@@ -60,9 +88,10 @@ def determine_color(frame, balls, radius):
 def main():
 
 	background_file_name = 'Background_Color.jpg'
-	file_name = 'StableOutput_Color4.jpg'
-	(masked_frame, balls) = detect_balls(background_file_name, file_name)
+	file_name = 'StableOutput_Color1.jpg'
+	(frame, masked_frame, balls) = detect_balls(background_file_name, file_name)
 	
-	ball_colors = determine_color(masked_frame, balls, 22)
+	#print(balls)
+	ball_colors = detect_color(frame, balls, 25)
 
 if __name__ == '__main__': main()
