@@ -8,7 +8,7 @@ def detect_balls(background_file_name, file_name):
 
 	#Background subtraction
 	diff = cv2.absdiff(frame, background)
-	cv2.imwrite("diff.jpg", diff)
+	cv2.imwrite("OutputDiff.jpg", diff)
 
 	#Threshold image
 	min_radius = 50
