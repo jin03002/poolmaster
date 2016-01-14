@@ -121,6 +121,7 @@ def find_pool_table(frame, balls, ctl, cbr):
 	l = pixl/pooll
 	w = pixw/poolw
 
+
 	# ctl = (75,103)
 	# ctr = (1859,103)
 	# cbl = (131,965)
@@ -165,11 +166,14 @@ def visualize(background, shifted_coords, ctl, cbr):
 	l = pixl/pooll
 	w = pixw/poolw
 
+	rad = (l+w)/2
+
 	print(shifted_coords)
 
-	for (nx, ny, r) in shifted_coords:
+	for (nx, ny, nr) in shifted_coords:
 		x=int(nx*l)
 		y=int(ny*w)
+		r=int(nr*rad)
 		cv2.circle(background, (x, y), r, (0, 255, 0), 4)
 	cv2.imwrite("visualize.jpg", background)
 
@@ -184,9 +188,6 @@ def main():
 	file_name = 'StableOutput_Color4.jpg'
 	(frame, masked_frame, balls) = detect_balls(background_file_name, file_name)
 	
-	print(len(frame))
-	print(len(frame[0]))
-	print(len(frame[0][0]))
 
 	(frame, nballs, shifted_coords) = find_pool_table(frame, balls, ctl, cbr)
 
@@ -201,6 +202,12 @@ def main():
 	with open('OutputShiftedCoords.csv', 'wb') as f:
 		writer=csv.writer(f)
 		writer.writerows(shifted_coords)
-	visualize(background, shifted_coords, ctl, cbr)
+
+	sc = []
+	with open('out_state.csv', 'rb') as csvfile:
+		reader = csv.reader(csvfile)
+		for row in reader:
+			sc.append(row)
+	visualize(background, sc, ctl, cbr)
 
 if __name__ == '__main__': main()
