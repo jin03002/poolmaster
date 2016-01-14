@@ -94,26 +94,30 @@ int main(int argc, char * const argv[]) {
   string line;
   if (file.is_open()) {
     int i = 0;
-    while (getline(file, line)) {
+    while (getline(file, line) && i < sizeof(balls)/sizeof(*balls)) {
       vector<string> v = split(line, ',');
       balls[i] = make_pair(atoi(v[0].c_str()), atoi(v[1].c_str()));
+      i++;
     }
   }
 
   // Output version info
-  cerr << getFastFizVersion() << endl;
-  cerr << getRulesVersion() << endl;
+  // cerr << getFastFizVersion() << endl;
+  // cerr << getRulesVersion() << endl;
 
   // Start a log file
   // LogWriter lw("example.log",GT_EIGHTBALL,&gn,"Example Agent");
-  // Ball::Type blist=[Ball::CUE, Ball::ONE, Ball::TWO, Ball:: THREE, Ball::FOUR, Ball::FIVE,
+  // Ball::Type blist={Ball::CUE, Ball::ONE, Ball::TWO, Ball:: THREE, Ball::FOUR, Ball::FIVE,
   //                   Ball::SIX, Ball::SEVEN, Ball::EIGHT, Ball::NINE, Ball::TEN, Ball::ELEVEN,
-  //                   Ball::TWELVE, Ball::THIRTEEN, Ball::FOURTEEN, Ball::FIFTEEN];
+  //                   Ball::TWELVE, Ball::THIRTEEN, Ball::FOURTEEN, Ball::FIFTEEN};
+
 
   TableState* ts = new TableState();
   // for (int i = 0; i < sizeof(balls)/; i++) {
   //   ts.setBall(blist[i], Ball::STATIONARY, balls[i][0], balls[i][1]);
   // }
+
+  // cout << balls[0].second << endl;
 
   ts->setBall(Ball::CUE,      Ball::STATIONARY, balls[0].first, balls[0].second);
   ts->setBall(Ball::ONE,      Ball::STATIONARY, balls[1].first, balls[1].second);
@@ -131,6 +135,39 @@ int main(int argc, char * const argv[]) {
   ts->setBall(Ball::THIRTEEN, Ball::STATIONARY, balls[13].first, balls[13].second);
   ts->setBall(Ball::FOURTEEN, Ball::STATIONARY, balls[14].first, balls[14].second);
   ts->setBall(Ball::FIFTEEN,  Ball::STATIONARY, balls[15].first, balls[15].second);
+
+  cout << ts->toString() << endl;
+
+  try{
+      Shot* shot = (*ts).executeShot(ShotParams(0.1, 0.1, 25.3, 274.0, 2.0));
+
+  // } catch (BadShotException e) {
+  } catch (char const* msg) {
+      cout << msg << endl;
+  }
+
+  cout << ts->toString() << endl;
+
+  ofstream outFile;
+  outFile.open ("out_state.csv");
+  outFile << ts->getBall(Ball::CUE).getPos().x << "," << ts->getBall(Ball::CUE).getPos().y << endl;
+  outFile << ts->getBall(Ball::ONE).getPos().x << "," << ts->getBall(Ball::ONE).getPos().y << endl;
+  outFile << ts->getBall(Ball::TWO).getPos().x << "," << ts->getBall(Ball::TWO).getPos().y << endl;
+  outFile << ts->getBall(Ball::THREE).getPos().x << "," << ts->getBall(Ball::THREE).getPos().y << endl;
+  outFile << ts->getBall(Ball::FOUR).getPos().x << "," << ts->getBall(Ball::FOUR).getPos().y << endl;
+  outFile << ts->getBall(Ball::FIVE).getPos().x << "," << ts->getBall(Ball::FIVE).getPos().y << endl;
+  outFile << ts->getBall(Ball::SIX).getPos().x << "," << ts->getBall(Ball::SIX).getPos().y << endl;
+  outFile << ts->getBall(Ball::SEVEN).getPos().x << "," << ts->getBall(Ball::SEVEN).getPos().y << endl;
+  outFile << ts->getBall(Ball::EIGHT).getPos().x << "," << ts->getBall(Ball::EIGHT).getPos().y << endl;
+  outFile << ts->getBall(Ball::NINE).getPos().x << "," << ts->getBall(Ball::NINE).getPos().y << endl;
+  outFile << ts->getBall(Ball::TEN).getPos().x << "," << ts->getBall(Ball::TEN).getPos().y << endl;
+  outFile << ts->getBall(Ball::ELEVEN).getPos().x << "," << ts->getBall(Ball::ELEVEN).getPos().y << endl;
+  outFile << ts->getBall(Ball::TWELVE).getPos().x << "," << ts->getBall(Ball::TWELVE).getPos().y << endl;
+  outFile << ts->getBall(Ball::THIRTEEN).getPos().x << "," << ts->getBall(Ball::THIRTEEN).getPos().y << endl;
+  outFile << ts->getBall(Ball::FOURTEEN).getPos().x << "," << ts->getBall(Ball::FOURTEEN).getPos().y << endl;
+  outFile << ts->getBall(Ball::FIFTEEN).getPos().x << "," << ts->getBall(Ball::FIFTEEN).getPos().y << endl;
+
+  outFile.close();
 
   // A typical break shot
   // GameShot myShot = {ShotParams(0.0, 0.0, 25.0, 270.0, 5.0), // Shot parameters
