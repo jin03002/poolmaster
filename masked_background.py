@@ -36,7 +36,7 @@ def detect_balls(background_file_name, file_name):
 	#Detect circles
 	balls = cv2.HoughCircles(gray_frame, cv2.cv.CV_HOUGH_GRADIENT, 5, minDist=40, param1=100, param2=70, minRadius=17, maxRadius=30)
 	balls = np.round(balls[0, :]).astype("int")
-	print("Detected balls")
+	# print("Detected balls")
 
 	# #Blob detection
 	# detector = cv2.SimpleBlobDetector()
@@ -65,7 +65,7 @@ def detect_color(frame, balls, radius):
 	
 	cv2.imwrite("OutputSaturation.jpg", saturation_frame)
 
-	print(saturation_frame)
+	# print(saturation_frame)
 
 	ind=1
 	for (x, y, r) in balls:
@@ -103,25 +103,81 @@ def find_white_ball(frame, balls):
 	total_rgb=total_rgb[np.argsort(total_rgb[:, 0])]
 
 	(a, wx, wy, r) = total_rgb[len(balls)-1]
-	print(wx,wy)
+	# print(wx,wy)
 	cv2.circle(frame, (wx, wy), r, (255, 0, 0), 4)
 	cv2.imwrite("OutputDetectWhite.jpg", frame)
 		
 	return [i[1:] for i in total_rgb]
 
+def find_pool_table(frame, balls):
+	ctl = (103,103) # just have to change ctl and cbr
+	# ctr = (1859,103)
+	# cbl = (103,965)
+	cbr = (1859,961)
+
+	pixl = cbr[0] - ctl[0]
+	pixw = cbr[1] - ctl[1]
+
+	pooll = 2.236
+	poolw = 1.116
+	
+	l = pixl/pooll
+	w = pixw/poolw
+
+	# ctl = (75,103)
+	# ctr = (1859,103)
+	# cbl = (131,965)
+	# cbr = (1813,961)
+	
+
+	# avgx = ctl[0]+ctr[0]+cbl[0]+cbr[0]
+	# avgx/=4
+	# avgy = ctl[1]+ctr[1]+cbl[1]+cbr[1]
+	# avgy/=4
+	# cv2.line(frame, ctl, ctr, (255, 0, 0), 4)
+	# cv2.line(frame, ctr, cbr, (255, 0, 0), 4)
+	# cv2.line(frame, cbl, cbr, (255, 0, 0), 4)
+	# cv2.line(frame, cbl, ctl, (255, 0, 0), 4)
+	cv2.imwrite("OutputDetectWhite2.jpg", frame)
+	nballs=[]
+	shifted_coords=[]
+	for (x,y,r) in balls:
+		if x<cbr[0] and x>ctl[0] and y<cbr[1] and y>ctl[1]:
+			shifted_coords.append(((x-ctl[0])/l,(y-ctl[1])/w,r))
+			nballs.append((x,y,r))
+
+	for (x, y, r) in nballs:
+		cv2.circle(frame, (x, y), r, (0, 255, 0), 4)
+	# for (x, y, r) in shifted_coords:
+	# 	cv2.circle(frame, int(x), int(y), int(r), (0, 255, 0), 4)
+
+	cv2.imwrite("DetectedBalls2.jpg", frame)
+
+
+	return (frame, nballs, shifted_coords)
+
 def main():
 
 	background_file_name = 'Background_Color.jpg'
-	file_name = 'StableOutput_Color4.jpg'
+	file_name = 'StableOutput_Color1.jpg'
 	(frame, masked_frame, balls) = detect_balls(background_file_name, file_name)
 	
+	print(len(frame))
+	print(len(frame[0]))
+	print(len(frame[0][0]))
+
+	(frame, nballs, shifted_coords) = find_pool_table(frame, balls)
+
 	#print(balls)
 	#ball_colors = detect_color(frame, balls, 25)
-	balls = find_white_ball(frame, balls)
+	nballs = find_white_ball(frame, nballs)
 
 	with open('OutputBalls.csv', 'wb') as f:
 		writer=csv.writer(f)
-		writer.writerows(balls)
+		writer.writerows(nballs)
 
+	with open('OutputShiftedCoords.csv', 'wb') as f:
+		writer=csv.writer(f)
+		writer.writerows(shifted_coords)
 
 if __name__ == '__main__': main()
