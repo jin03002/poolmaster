@@ -150,22 +150,22 @@ int main(int argc, char * const argv[]) {
 
   ofstream outFile;
   outFile.open ("out_state.csv");
-  outFile << ts->getBall(Ball::CUE).getPos().x << "," << ts->getBall(Ball::CUE).getPos().y << endl;
-  outFile << ts->getBall(Ball::ONE).getPos().x << "," << ts->getBall(Ball::ONE).getPos().y << endl;
-  outFile << ts->getBall(Ball::TWO).getPos().x << "," << ts->getBall(Ball::TWO).getPos().y << endl;
-  outFile << ts->getBall(Ball::THREE).getPos().x << "," << ts->getBall(Ball::THREE).getPos().y << endl;
-  outFile << ts->getBall(Ball::FOUR).getPos().x << "," << ts->getBall(Ball::FOUR).getPos().y << endl;
-  outFile << ts->getBall(Ball::FIVE).getPos().x << "," << ts->getBall(Ball::FIVE).getPos().y << endl;
-  outFile << ts->getBall(Ball::SIX).getPos().x << "," << ts->getBall(Ball::SIX).getPos().y << endl;
-  outFile << ts->getBall(Ball::SEVEN).getPos().x << "," << ts->getBall(Ball::SEVEN).getPos().y << endl;
-  outFile << ts->getBall(Ball::EIGHT).getPos().x << "," << ts->getBall(Ball::EIGHT).getPos().y << endl;
-  outFile << ts->getBall(Ball::NINE).getPos().x << "," << ts->getBall(Ball::NINE).getPos().y << endl;
-  outFile << ts->getBall(Ball::TEN).getPos().x << "," << ts->getBall(Ball::TEN).getPos().y << endl;
-  outFile << ts->getBall(Ball::ELEVEN).getPos().x << "," << ts->getBall(Ball::ELEVEN).getPos().y << endl;
-  outFile << ts->getBall(Ball::TWELVE).getPos().x << "," << ts->getBall(Ball::TWELVE).getPos().y << endl;
-  outFile << ts->getBall(Ball::THIRTEEN).getPos().x << "," << ts->getBall(Ball::THIRTEEN).getPos().y << endl;
-  outFile << ts->getBall(Ball::FOURTEEN).getPos().x << "," << ts->getBall(Ball::FOURTEEN).getPos().y << endl;
-  outFile << ts->getBall(Ball::FIFTEEN).getPos().x << "," << ts->getBall(Ball::FIFTEEN).getPos().y << endl;
+  outFile << ts->getBall(Ball::CUE).getPos().x << "," << ts->getBall(Ball::CUE).getPos().y << 0.028575 << endl;
+  outFile << ts->getBall(Ball::ONE).getPos().x << "," << ts->getBall(Ball::ONE).getPos().y << 0.028575 << endl;
+  outFile << ts->getBall(Ball::TWO).getPos().x << "," << ts->getBall(Ball::TWO).getPos().y << 0.028575 << endl;
+  outFile << ts->getBall(Ball::THREE).getPos().x << "," << ts->getBall(Ball::THREE).getPos().y << 0.028575 << endl;
+  outFile << ts->getBall(Ball::FOUR).getPos().x << "," << ts->getBall(Ball::FOUR).getPos().y << 0.028575 << endl;
+  outFile << ts->getBall(Ball::FIVE).getPos().x << "," << ts->getBall(Ball::FIVE).getPos().y << 0.028575 << endl;
+  outFile << ts->getBall(Ball::SIX).getPos().x << "," << ts->getBall(Ball::SIX).getPos().y << 0.028575 << endl;
+  outFile << ts->getBall(Ball::SEVEN).getPos().x << "," << ts->getBall(Ball::SEVEN).getPos().y << 0.028575 << endl;
+  outFile << ts->getBall(Ball::EIGHT).getPos().x << "," << ts->getBall(Ball::EIGHT).getPos().y << 0.028575 << endl;
+  outFile << ts->getBall(Ball::NINE).getPos().x << "," << ts->getBall(Ball::NINE).getPos().y << 0.028575 << endl;
+  outFile << ts->getBall(Ball::TEN).getPos().x << "," << ts->getBall(Ball::TEN).getPos().y << 0.028575 << endl;
+  outFile << ts->getBall(Ball::ELEVEN).getPos().x << "," << ts->getBall(Ball::ELEVEN).getPos().y << 0.028575 << endl;
+  outFile << ts->getBall(Ball::TWELVE).getPos().x << "," << ts->getBall(Ball::TWELVE).getPos().y << 0.028575 << endl;
+  outFile << ts->getBall(Ball::THIRTEEN).getPos().x << "," << ts->getBall(Ball::THIRTEEN).getPos().y << 0.028575 << endl;
+  outFile << ts->getBall(Ball::FOURTEEN).getPos().x << "," << ts->getBall(Ball::FOURTEEN).getPos().y << 0.028575 << endl;
+  outFile << ts->getBall(Ball::FIFTEEN).getPos().x << "," << ts->getBall(Ball::FIFTEEN).getPos().y << 0.028575 << endl;
 
   outFile.close();
 
