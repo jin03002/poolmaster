@@ -171,7 +171,12 @@ def visualize(background, shifted_coords, ctl, cbr):
 	print(shifted_coords)
 
 	for (nx, ny, nr) in shifted_coords:
-		x=int(nx*l)
+		nx=float(nx)
+		ny=float(ny)
+		nr=float(nr)
+		x=nx*l
+
+		x=int(x)
 		y=int(ny*w)
 		r=int(nr*rad)
 		cv2.circle(background, (x, y), r, (0, 255, 0), 4)
@@ -185,7 +190,7 @@ def main():
 
 	background_file_name = 'Background_Color.jpg'
 	background = cv2.imread(background_file_name)
-	file_name = 'StableOutput_Color4.jpg'
+	file_name = 'StableOutput_Color3.jpg'
 	(frame, masked_frame, balls) = detect_balls(background_file_name, file_name)
 	
 
