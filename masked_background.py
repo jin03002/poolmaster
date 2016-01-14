@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import csv
 import copy
 
 def detect_balls(background_file_name, file_name):
@@ -84,14 +85,43 @@ def detect_color(frame, balls, radius):
 
 	return dict_balls
 
+def find_white_ball(frame, balls):
+	total_rgb=[]
+	for (x, y, r) in balls:
+		rgb_value = 0
+		for a in range(x-r, x+r):
+			for b in range(y-r, y+r):
+				if((a-x)^2 + (b-y)^2 < r^2):
+					rgb_value += frame[b,a,0]
+					rgb_value += frame[b,a,1]
+					rgb_value += frame[b,a,2]
+
+		n = [rgb_value, x, y, r]
+		total_rgb.append(n)
+
+	total_rgb = np.array(total_rgb)
+	total_rgb=total_rgb[np.argsort(total_rgb[:, 0])]
+
+	(a, wx, wy, r) = total_rgb[len(balls)-1]
+	print(wx,wy)
+	cv2.circle(frame, (wx, wy), r, (255, 0, 0), 4)
+	cv2.imwrite("OutputDetectWhite.jpg", frame)
+		
+	return [i[1:] for i in total_rgb]
 
 def main():
 
 	background_file_name = 'Background_Color.jpg'
-	file_name = 'StableOutput_Color1.jpg'
+	file_name = 'StableOutput_Color4.jpg'
 	(frame, masked_frame, balls) = detect_balls(background_file_name, file_name)
 	
 	#print(balls)
-	ball_colors = detect_color(frame, balls, 25)
+	#ball_colors = detect_color(frame, balls, 25)
+	balls = find_white_ball(frame, balls)
+
+	with open('OutputBalls.csv', 'wb') as f:
+		writer=csv.writer(f)
+		writer.writerows(balls)
+
 
 if __name__ == '__main__': main()
