@@ -65,6 +65,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <tr1/tuple>
 #include <string>
 #include <map>
 #include <cstdlib>
@@ -103,12 +104,19 @@ ostream& operator<< (ostream& out, const vector<T>& v) {
     return out;
 }
 
+void writeAllTablesFile(vector<tr1::tuple<string, float, int> > tableStates) {
+    ofstream outFile;
+    outFile.open("tables.txt");
+
+    for (std::vector<tr1::tuple<string, float, int> >::iterator it = tableStates.begin(); it != tableStates.end(); ++it) {
+        // TableState* ts = tr1::get<0>(*it);
+        outFile << "Table state: " << tr1::get<0>(*it) << " Angle: " << tr1::get<1>(*it) << " Balls pocketed: " << tr1::get<2>(*it) << endl;
+    }
+}
+
 void simulateShots(TableState* ts) {
     string initialState = ts->toString();
-    vector<string> tableStates;
-
-    ShotParams params = ShotParams(0.1, 0.1, 25.3, 274.0, 2.0);
-    Shot* shot = (*ts).executeShot(params);
+    vector<tr1::tuple<string, float, int> > tableStates;
 
     for (int i = 0; i < 360; i++) {
         TableState* start = new TableState();
@@ -116,7 +124,11 @@ void simulateShots(TableState* ts) {
         ShotParams params = ShotParams(0.0, 0.0, 20, i, 3.0);
         try {
             Shot* shot = start->executeShot(params);
-            tableStates.push_back(start->toString());
+            int ballsPocketed = 0;
+            for (std::vector<Ball>::iterator it = start->getBegin(); it != start->getEnd(); ++it) {
+                ballsPocketed += (*it).isPocketed();
+            }
+            tableStates.push_back(tr1::make_tuple(start->toString(), i, ballsPocketed));
         } catch (BadShotException e) {
             cout << "shot " << i << " skipped: " << e.getTypeString() << endl;
         } catch (char const* msg) {
@@ -124,6 +136,8 @@ void simulateShots(TableState* ts) {
         }
     }
     cout << tableStates.size() << " shots taken" << endl;
+
+    writeAllTablesFile(tableStates);
 }
 
 void writeTableFile(TableState* ts) {
@@ -150,7 +164,7 @@ void writeTableFile(TableState* ts) {
 }
 
 int main(int argc, char * const argv[]) {
-  ifstream file("OutputBalls.csv");
+  ifstream file("OutputShiftedCoords.csv");
 
   pair<int, int> balls[16];
   string line;
