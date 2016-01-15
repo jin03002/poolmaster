@@ -74,6 +74,9 @@
 using namespace std;
 using namespace Pool;
 
+string bestState;
+float bestAngle;
+
 // For splitting strings
 std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
     std::stringstream ss(s);
@@ -117,16 +120,28 @@ void writeAllTablesFile(vector<tr1::tuple<string, float, int> > tableStates) {
 void simulateShots(TableState* ts) {
     string initialState = ts->toString();
     vector<tr1::tuple<string, float, int> > tableStates;
+    int max = -1;
+    bestState = "";
 
-    for (int i = 0; i < 360; i++) {
+    for (int i = 0; i < 360; i+=1) {
         TableState* start = new TableState();
         start->fromString(initialState);
-        ShotParams params = ShotParams(0.0, 0.0, 20, i, 3.0);
+        ShotParams params = ShotParams(0.0, 0.0, 20, i, 4.5);
         try {
             Shot* shot = start->executeShot(params);
             int ballsPocketed = 0;
             for (std::vector<Ball>::iterator it = start->getBegin(); it != start->getEnd(); ++it) {
-                ballsPocketed += (*it).isPocketed();
+                if((*it).isPocketed())
+                    ballsPocketed += 1;
+                else if(!(*it).isInPlay())
+                    exit(-1);
+            }
+            if (ballsPocketed > max){
+                bestState = start->toString();
+                max = ballsPocketed;
+                bestAngle = i;
+                cout << max << endl;
+                // cout << bestState << endl;
             }
             tableStates.push_back(tr1::make_tuple(start->toString(), i, ballsPocketed));
         } catch (BadShotException e) {
@@ -141,24 +156,27 @@ void simulateShots(TableState* ts) {
 }
 
 void writeTableFile(TableState* ts) {
+    TableState* table = new TableState();
+    table->fromString(bestState);
     ofstream outFile;
     outFile.open("out_state.csv");
-    outFile << ts->getBall(Ball::CUE).getPos().x << "," << ts->getBall(Ball::CUE).getPos().y << "," << 0.028575 << endl;
-    outFile << ts->getBall(Ball::ONE).getPos().x << "," << ts->getBall(Ball::ONE).getPos().y << "," << 0.028575 << endl;
-    outFile << ts->getBall(Ball::TWO).getPos().x << "," << ts->getBall(Ball::TWO).getPos().y << "," << 0.028575 << endl;
-    outFile << ts->getBall(Ball::THREE).getPos().x << "," << ts->getBall(Ball::THREE).getPos().y << "," << 0.028575 << endl;
-    outFile << ts->getBall(Ball::FOUR).getPos().x << "," << ts->getBall(Ball::FOUR).getPos().y << "," << 0.028575 << endl;
-    outFile << ts->getBall(Ball::FIVE).getPos().x << "," << ts->getBall(Ball::FIVE).getPos().y << "," << 0.028575 << endl;
-    outFile << ts->getBall(Ball::SIX).getPos().x << "," << ts->getBall(Ball::SIX).getPos().y << "," << 0.028575 << endl;
-    outFile << ts->getBall(Ball::SEVEN).getPos().x << "," << ts->getBall(Ball::SEVEN).getPos().y << "," << 0.028575 << endl;
-    outFile << ts->getBall(Ball::EIGHT).getPos().x << "," << ts->getBall(Ball::EIGHT).getPos().y << "," << 0.028575 << endl;
-    outFile << ts->getBall(Ball::NINE).getPos().x << "," << ts->getBall(Ball::NINE).getPos().y << "," << 0.028575 << endl;
-    outFile << ts->getBall(Ball::TEN).getPos().x << "," << ts->getBall(Ball::TEN).getPos().y << "," << 0.028575 << endl;
-    outFile << ts->getBall(Ball::ELEVEN).getPos().x << "," << ts->getBall(Ball::ELEVEN).getPos().y << "," << 0.028575 << endl;
-    outFile << ts->getBall(Ball::TWELVE).getPos().x << "," << ts->getBall(Ball::TWELVE).getPos().y << "," << 0.028575 << endl;
-    outFile << ts->getBall(Ball::THIRTEEN).getPos().x << "," << ts->getBall(Ball::THIRTEEN).getPos().y << "," << 0.028575 << endl;
-    outFile << ts->getBall(Ball::FOURTEEN).getPos().x << "," << ts->getBall(Ball::FOURTEEN).getPos().y << "," << 0.028575 << endl;
-    outFile << ts->getBall(Ball::FIFTEEN).getPos().x << "," << ts->getBall(Ball::FIFTEEN).getPos().y << "," << 0.028575 << endl;
+    outFile << bestAngle << endl;
+    outFile << table->getBall(Ball::CUE).getPos().x << "," << table->getBall(Ball::CUE).getPos().y << "," << 0.028575 << endl;
+    outFile << table->getBall(Ball::ONE).getPos().x << "," << table->getBall(Ball::ONE).getPos().y << "," << 0.028575 << endl;
+    outFile << table->getBall(Ball::TWO).getPos().x << "," << table->getBall(Ball::TWO).getPos().y << "," << 0.028575 << endl;
+    outFile << table->getBall(Ball::THREE).getPos().x << "," << table->getBall(Ball::THREE).getPos().y << "," << 0.028575 << endl;
+    outFile << table->getBall(Ball::FOUR).getPos().x << "," << table->getBall(Ball::FOUR).getPos().y << "," << 0.028575 << endl;
+    outFile << table->getBall(Ball::FIVE).getPos().x << "," << table->getBall(Ball::FIVE).getPos().y << "," << 0.028575 << endl;
+    outFile << table->getBall(Ball::SIX).getPos().x << "," << table->getBall(Ball::SIX).getPos().y << "," << 0.028575 << endl;
+    outFile << table->getBall(Ball::SEVEN).getPos().x << "," << table->getBall(Ball::SEVEN).getPos().y << "," << 0.028575 << endl;
+    outFile << table->getBall(Ball::EIGHT).getPos().x << "," << table->getBall(Ball::EIGHT).getPos().y << "," << 0.028575 << endl;
+    outFile << table->getBall(Ball::NINE).getPos().x << "," << table->getBall(Ball::NINE).getPos().y << "," << 0.028575 << endl;
+    outFile << table->getBall(Ball::TEN).getPos().x << "," << table->getBall(Ball::TEN).getPos().y << "," << 0.028575 << endl;
+    outFile << table->getBall(Ball::ELEVEN).getPos().x << "," << table->getBall(Ball::ELEVEN).getPos().y << "," << 0.028575 << endl;
+    outFile << table->getBall(Ball::TWELVE).getPos().x << "," << table->getBall(Ball::TWELVE).getPos().y << "," << 0.028575 << endl;
+    outFile << table->getBall(Ball::THIRTEEN).getPos().x << "," << table->getBall(Ball::THIRTEEN).getPos().y << "," << 0.028575 << endl;
+    outFile << table->getBall(Ball::FOURTEEN).getPos().x << "," << table->getBall(Ball::FOURTEEN).getPos().y << "," << 0.028575 << endl;
+    outFile << table->getBall(Ball::FIFTEEN).getPos().x << "," << table->getBall(Ball::FIFTEEN).getPos().y << "," << 0.028575 << endl;
 
     outFile.close();
 }
@@ -166,13 +184,13 @@ void writeTableFile(TableState* ts) {
 int main(int argc, char * const argv[]) {
   ifstream file("OutputShiftedCoords.csv");
 
-  pair<int, int> balls[16];
+  pair<float, float> balls[16];
   string line;
   if (file.is_open()) {
     int i = 0;
     while (getline(file, line) && i < sizeof(balls)/sizeof(*balls)) {
       vector<string> v = split(line, ',');
-      balls[i] = make_pair(atoi(v[0].c_str()), atoi(v[1].c_str()));
+      balls[i] = make_pair(atof(v[0].c_str()), atof(v[1].c_str()));
       i++;
     }
   }
