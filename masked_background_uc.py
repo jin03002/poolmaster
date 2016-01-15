@@ -20,7 +20,7 @@ def detect_balls(background_file_name, file_name):
 
 	lower_blue = np.array([6, 6, 6])
 	upper_blue = np.array([255, 255, 255])
-	
+
 	gray_frame = cv2.inRange(diff, lower_blue, upper_blue)
 
 	cv2.imwrite("4OutputMask.jpg", gray_frame)
@@ -258,15 +258,15 @@ def drawL(frame, nballs, angle1, angle2):
 	cv2.imwrite("9line.jpg", frame)
 
 def main():
-	# ctl = (45,53) # just have to change ctl and cbr
+	ctl = (45,53) # just have to change ctl and cbr
 	# ctr = (1859,103)
 	# cbl = (103,965)
-	# cbr = (1832,951)
+	cbr = (1832,951)
 
-	ctl = (105,103)
+	# ctl = (105,103)
 	# ctr = (1859,103)
 	# cbl = (131,965)
-	cbr = (1843,961)
+	# cbr = (1843,961)
 
 	background_file_name = 'UCBackground.jpg'
 	background = cv2.imread(background_file_name)

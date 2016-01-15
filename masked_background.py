@@ -12,7 +12,7 @@ def detect_balls(background_file_name, file_name):
 
 	#Background subtraction
 	diff = cv2.absdiff(frame, background)
-	cv2.imwrite("3OutputDiff.jpg", diff)
+	cv2.imwrite("OutputDiff.jpg", diff)
 
 	#Threshold image
 	min_radius = 50
@@ -20,22 +20,19 @@ def detect_balls(background_file_name, file_name):
 
 	lower_blue = np.array([6, 6, 6])
 	upper_blue = np.array([255, 255, 255])
-	
+
 	gray_frame = cv2.inRange(diff, lower_blue, upper_blue)
-
-	cv2.imwrite("4OutputMask.jpg", gray_frame)
-
 	gray_frame = cv2.medianBlur(gray_frame, 9)
 
 	#Mask thresholded image with original image
 	masked_frame = cv2.bitwise_and(frame, frame, mask = gray_frame)
 
-	cv2.imwrite("5OutputMasked.jpg", masked_frame)
+	cv2.imwrite("OutputMasked.jpg", masked_frame)
 
 	#Convert image to grayscale
 	gray_frame = cv2.cvtColor(masked_frame, cv2.COLOR_BGR2GRAY)
 	gray_frame = cv2.medianBlur(gray_frame,3)
-	cv2.imwrite("6OutputGray.jpg", gray_frame)
+	cv2.imwrite("OutputGray.jpg", gray_frame)
 
 	#Detect circles
 	balls = cv2.HoughCircles(gray_frame, cv2.cv.CV_HOUGH_GRADIENT, 5, minDist=50, param1=100, param2=70, minRadius=17, maxRadius=30)
@@ -46,7 +43,7 @@ def detect_balls(background_file_name, file_name):
 	for (x, y, r) in balls:
 		cv2.circle(frame, (x, y), r, (0, 255, 0), 4)
 
-	cv2.imwrite("7DetectedBalls.jpg", frame)
+	cv2.imwrite("DetectedBalls.jpg", frame)
 
 	return (oframe, masked_frame, balls)
 
@@ -104,7 +101,7 @@ def find_white_ball(frame, balls):
 	(a, wx, wy, r) = total_rgb[len(balls)-1]
 	# print(wx,wy)
 	cv2.circle(frame, (wx, wy), r, (255, 0, 0), 4)
-	cv2.imwrite("8OutputDetectWhite.jpg", frame)
+	cv2.imwrite("OutputDetectWhite.jpg", frame)
 	
 	sort = [i[1:] for i in total_rgb]
 	return sort[::-1]
@@ -146,12 +143,13 @@ def find_pool_table(frame, balls, ctl, cbr):
 	for i in range(len(nballs)):
 		(x, y, r) = nballs[i]
 		color= (0, 255, 0)
-		# if i is 0:
-		# 	color =  ( 255, 0, 0)
+		if i is 0:
+			color =  ( 255, 0, 0)
 		cv2.circle(frame, (x, y), r, color, 4)
 	#for (x, y, r) in shifted_coords:
 	# 	cv2.circle(frame, int(x), int(y), int(r), (0, 255, 0), 4)
 
+	cv2.imwrite("DetectedBalls2.jpg", frame)
 	return nballs
 
 
@@ -239,7 +237,7 @@ def visualize(original_frame, background, original_coords, shifted_coords, ctl, 
 			cv2.circle(original_frame , (nx, ny), r, color, 4)
 			#cv2.circle(background, (x+ctl[0], y+ctl[1]), r, color, 4)
 	
-	cv2.imwrite("10visualize.jpg", background)
+	cv2.imwrite("visualize.jpg", background)
 	#cv2.imwrite("test.jpg", original_frame)
 
 def drawL(frame, nballs, angle1, angle2):
@@ -255,18 +253,13 @@ def drawL(frame, nballs, angle1, angle2):
 	cv2.line(frame, P1, P2, (255, 0, 0), 4)
 	cv2.line(frame, P1, P3, (255, 0, 0), 4)
 
-	cv2.imwrite("9line.jpg", frame)
+	cv2.imwrite("line.jpg", frame)
 
 def main():
-	# ctl = (45,53) # just have to change ctl and cbr
+	ctl = (45,53) # just have to change ctl and cbr
 	# ctr = (1859,103)
 	# cbl = (103,965)
-	# cbr = (1832,951)
-
-	ctl = (105,103)
-	# ctr = (1859,103)
-	# cbl = (131,965)
-	cbr = (1843,961)
+	cbr = (1832,951)
 
 	background_file_name = 'UCBackground.jpg'
 	background = cv2.imread(background_file_name)
@@ -276,7 +269,7 @@ def main():
 
 	nballs = find_pool_table(frame, balls, ctl, cbr)
 
-	nballs = find_white_ball(frame, nballs)
+	# nballs = find_white_ball(frame, nballs)
 	shifted_coords = shift(frame, nballs, ctl, cbr)
 
 	# with open('OutputBalls.csv', 'wb') as f:
