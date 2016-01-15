@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import csv
+import math
 import copy
 
 def detect_balls(background_file_name, file_name):
@@ -238,6 +239,15 @@ def visualize(original_frame, background, original_coords, shifted_coords, ctl, 
 	cv2.imwrite("visualize.jpg", background)
 	#cv2.imwrite("test.jpg", original_frame)
 
+def drawL(frame, nballs, angle):
+	length = 10000
+	P1 = (nballs[0][0], nballs[0][1])
+
+	P2 = (int(round(P1[0] + length * math.cos(angle * math.pi / 180.0))),
+		  int(round(P1[1] + length * math.sin(angle * math.pi / 180.0))))
+	cv2.line(frame, P1, P2, (255, 0, 0), 4)
+	cv2.imwrite("line.jpg", frame)
+
 def main():
 	ctl = (103,103) # just have to change ctl and cbr
 	# ctr = (1859,103)
@@ -254,6 +264,7 @@ def main():
 
 	nballs = find_white_ball(frame, nballs)
 	shifted_coords = shift(frame, nballs, ctl, cbr)
+	drawL(frame, nballs, 278)
 
 	# with open('OutputBalls.csv', 'wb') as f:
 	# 	writer=csv.writer(f)
