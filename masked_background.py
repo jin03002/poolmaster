@@ -259,9 +259,9 @@ def main():
 	# 	writer=csv.writer(f)
 	# 	writer.writerows(nballs)
 
-	# with open('OutputShiftedCoords.csv', 'wb') as f:
-	# 	writer=csv.writer(f)
-	# 	writer.writerows(shifted_coords)
+	with open('OutputShiftedCoords.csv', 'wb') as f:
+		writer=csv.writer(f)
+		writer.writerows(shifted_coords)
 
 	sc = []
 	with open('out_state.csv', 'rb') as csvfile:
