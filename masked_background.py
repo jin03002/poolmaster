@@ -18,7 +18,7 @@ def detect_balls(background_file_name, file_name):
 	min_radius = 50
 	max_radius = 1000
 
-	lower_blue = np.array([15, 15, 15])
+	lower_blue = np.array([6, 6, 6])
 	upper_blue = np.array([255, 255, 255])
 
 	gray_frame = cv2.inRange(diff, lower_blue, upper_blue)
@@ -35,10 +35,11 @@ def detect_balls(background_file_name, file_name):
 	cv2.imwrite("OutputGray.jpg", gray_frame)
 
 	#Detect circles
-	balls = cv2.HoughCircles(gray_frame, cv2.cv.CV_HOUGH_GRADIENT, 5, minDist=40, param1=100, param2=70, minRadius=17, maxRadius=30)
+	balls = cv2.HoughCircles(gray_frame, cv2.cv.CV_HOUGH_GRADIENT, 5, minDist=50, param1=100, param2=70, minRadius=17, maxRadius=30)
 	balls = np.round(balls[0, :]).astype("int")
 
 	#Display detected balls
+	ind = 1
 	for (x, y, r) in balls:
 		cv2.circle(frame, (x, y), r, (0, 255, 0), 4)
 
@@ -106,7 +107,7 @@ def find_white_ball(frame, balls):
 	return sort[::-1]
 
 
-def find_pool_table(frame2, balls, ctl, cbr):
+def find_pool_table(frame, balls, ctl, cbr):
 
 	pixl = cbr[0] - ctl[0]
 	pixw = cbr[1] - ctl[1]
@@ -132,8 +133,7 @@ def find_pool_table(frame2, balls, ctl, cbr):
 	# cv2.line(frame, ctr, cbr, (255, 0, 0), 4)
 	# cv2.line(frame, cbl, cbr, (255, 0, 0), 4)
 	# cv2.line(frame, cbl, ctl, (255, 0, 0), 4)
-
-	frame=frame2
+	cv2.rectangle(frame, ctl, cbr, (255, 0, 0), 4)
 	nballs=[]
 
 	for (x,y,r) in balls:
@@ -149,7 +149,7 @@ def find_pool_table(frame2, balls, ctl, cbr):
 	#for (x, y, r) in shifted_coords:
 	# 	cv2.circle(frame, int(x), int(y), int(r), (0, 255, 0), 4)
 
-	#cv2.imwrite("DetectedBalls2.jpg", frame)
+	cv2.imwrite("DetectedBalls2.jpg", frame)
 	return nballs
 
 
@@ -229,42 +229,48 @@ def visualize(original_frame, background, original_coords, shifted_coords, ctl, 
 
 		print(x,y)
 
-		current_ball = original_frame[(ny-r-1) : (ny+r+2), (nx-r-1) : (nx+r+2)]
-		#cv2.imwrite("Testing"+str(i+1)+".jpg",current_ball)
-		background[(y+ctl[1]-r-1) : (y+ctl[1]+r+2), (x+ctl[0]-r-1) : (x+ctl[0]+r+2)] = current_ball
+		if(x < 1800 and y < 900):
+			current_ball = original_frame[(ny-r-1) : (ny+r+2), (nx-r-1) : (nx+r+2)]
+			#cv2.imwrite("Testing"+str(i+1)+".jpg",current_ball)
+			background[(y+ctl[1]-r-1) : (y+ctl[1]+r+2), (x+ctl[0]-r-1) : (x+ctl[0]+r+2)] = current_ball
 
-		cv2.circle(original_frame , (nx, ny), r, color, 4)
-		#cv2.circle(background, (x+ctl[0], y+ctl[1]), r, color, 4)
+			cv2.circle(original_frame , (nx, ny), r, color, 4)
+			#cv2.circle(background, (x+ctl[0], y+ctl[1]), r, color, 4)
 	
 	cv2.imwrite("visualize.jpg", background)
 	#cv2.imwrite("test.jpg", original_frame)
 
-def drawL(frame, nballs, angle):
+def drawL(frame, nballs, angle1, angle2):
 	length = 10000
 	P1 = (nballs[0][0], nballs[0][1])
 
-	P2 = (int(round(P1[0] + length * math.cos(angle * math.pi / 180.0))),
-		  int(round(P1[1] + length * math.sin(angle * math.pi / 180.0))))
+	P2 = (int(round(P1[0] + length * math.cos(angle1 * math.pi / 180.0))),
+		  int(round(P1[1] + length * math.sin(angle1 * math.pi / 180.0))))
+
+	P3 = (int(round(P1[0] + length * math.cos(angle2 * math.pi / 180.0))),
+		  int(round(P1[1] + length * math.sin(angle2 * math.pi / 180.0))))
+
 	cv2.line(frame, P1, P2, (255, 0, 0), 4)
+	cv2.line(frame, P1, P3, (255, 0, 0), 4)
+
 	cv2.imwrite("line.jpg", frame)
 
 def main():
-	ctl = (103,103) # just have to change ctl and cbr
+	ctl = (45,53) # just have to change ctl and cbr
 	# ctr = (1859,103)
 	# cbl = (103,965)
-	cbr = (1859,961)
+	cbr = (1832,951)
 
-	background_file_name = 'Background_Color.jpg'
+	background_file_name = 'UCBackground.jpg'
 	background = cv2.imread(background_file_name)
-	file_name = 'StableOutput_Color3.jpg'
+	file_name = 'UCOutput1.jpg'
 	(frame, masked_frame, balls) = detect_balls(background_file_name, file_name)
 	oframe = copy.copy(frame)	
 
 	nballs = find_pool_table(frame, balls, ctl, cbr)
 
-	nballs = find_white_ball(frame, nballs)
+	# nballs = find_white_ball(frame, nballs)
 	shifted_coords = shift(frame, nballs, ctl, cbr)
-	drawL(frame, nballs, 278)
 
 	# with open('OutputBalls.csv', 'wb') as f:
 	# 	writer=csv.writer(f)
@@ -280,6 +286,11 @@ def main():
 		for row in reader:
 			sc.append(row)
 
+	angle1 = int(sc[0][0])
+	angle2 = int(sc[1][0])
+	sc=sc[2:]
+
 	visualize(oframe, background, nballs, sc, ctl, cbr)
+	drawL(oframe, nballs, angle1, angle2)
 
 if __name__ == '__main__': main()

@@ -27,7 +27,7 @@ def main():
 	output = frame.copy()
 
 	#Output to file for testing
-	cv2.imwrite("Output.jpg", frame)
+	cv2.imwrite("UCOutput1.jpg", frame)
 
 	#56, 182, 241
 	#20, 77, 144
@@ -35,10 +35,10 @@ def main():
 	#Hough circle detection using greyscale img
 	min_radius = 50
 	max_radius = 1000
-
+ 	
 	gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 	gray_frame = cv2.medianBlur(gray_frame,21)
-	cv2.imwrite("OutputGray.jpg", gray_frame)
+	#cv2.imwrite("OutputGray.jpg", gray_frame)
 
 	balls = cv2.HoughCircles(gray_frame, cv2.cv.CV_HOUGH_GRADIENT, 1.9, circles=21, minDist=150, param1=100, param2=100, minRadius=100, maxRadius=500)
 
@@ -50,7 +50,7 @@ def main():
 	for (x, y, z) in balls:
 		cv2.circle(frame, (x, y), z, (0, 255, 0), 4)
 
-	cv2.imwrite("DetectedBalls.jpg", frame )
+	#cv2.imwrite("DetectedBalls.jpg", frame )
 	cv2.imshow("output", frame)
 	cv2.waitKey(0)
 
